@@ -3,7 +3,7 @@ let userToken = localStorage.getItem('token');
 let username = localStorage.getItem('username');
 let userUrl = 'http://localhost:3000/GettingUser?username=' + username;
 
-console.log(userToken);
+// console.log(userToken);
 xhttpUser.open("GET", userUrl, true);
 xhttpUser.setRequestHeader('Authorization', 'bearer ' + userToken);
 xhttpUser.onload = function(){

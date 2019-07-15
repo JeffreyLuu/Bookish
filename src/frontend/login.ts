@@ -7,11 +7,13 @@ function readLogin(form){
     xhttp.open("POST", url, true);
     xhttp.onload = function() {
         const token = JSON.parse(xhttp.response).token;
+        console.log(token)
         const username = JSON.parse(xhttp.response).username;
         if (token){
             localStorage.setItem('token', token);
             localStorage.setItem('username', username);
-        // const userurl = 'http://localhost:3000/User?authenticate=' + token;
+            // console.log(token);
+            // document.cookie = `jwt=${token};`;
             window.location.assign('http://localhost:3000/User');
         }
         else if (JSON.parse(xhttp.response).message){

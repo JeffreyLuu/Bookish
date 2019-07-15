@@ -1,6 +1,4 @@
 import express from "express";
-import Book from "./model_book"
-import User from "./model_user"
 import { resolve } from "url";
 import jwt from "jsonwebtoken"
 const JwtStrategy = require('passport-jwt').Strategy,
@@ -13,11 +11,39 @@ const db = pgp('postgres://bookish:SoftwireBookish@[::1]:5432/bookish')
 import {getAllBooks, getUsers, getUserCurrent} from "./libraryParser"
 import passport from 'passport';
 const secret = 'icecream'
+// const cookieParser = require('cookie-parser');
+
+// app.use(cookieParser)
+
+// const cookieExtractor = function(req) {
+//     var token = 'a';
+//     console.log(token);
+//     if (req && req.cookies)
+//     {
+//         token = req.cookies['jwt'];
+
+//     }
+//     console.log(req.cookies);
+//     return token;
+// };
 
 const opts = {   
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: secret
 };
+
+app.use('/login', express.static(path.join(__dirname, 'frontend')));
+app.get('/login', passport.authenticate('jwt'))
+
+async function ensureAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    else {
+        res.redirect('/login')
+    }
+}
+
 
 passport.use(new JwtStrategy(opts, async function(jwtPayload, done){
     try{
@@ -33,9 +59,8 @@ passport.use(new JwtStrategy(opts, async function(jwtPayload, done){
     }
 }));
 
-app.use('/login', express.static(path.join(__dirname, 'frontend')));
-
-app.use('/AllBooks', express.static(path.join(__dirname, 'frontend/books.html')));
+//app.use('/Books', passport.authenticate('jwt', { session: false }))
+app.use('/Books', passport.authenticate('jwt', { session: false }), express.static(path.join(__dirname, 'frontend/books.html')));
 
 app.use('/User', express.static(path.join(__dirname, 'frontend/user.html')));
 
